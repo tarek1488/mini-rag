@@ -17,5 +17,15 @@ $ python -m venv venv
 ```bash
 $ ./.venv\Scripts\Activate.ps1
 ```
+## Installation
+### Install required packages
+```bash
+$ pip install -r requirments.txt
+```
+### Setup the enviroments variables
+```bash
+$ cp .env.example .env 
+```
+Setup your enviroemnts varibale in the .env file
 
 
