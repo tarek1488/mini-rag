@@ -18,6 +18,7 @@ $ python -m venv venv
 $ ./.venv\Scripts\Activate.ps1
 ```
 ## Installation
+
 ### Install required packages
 ```bash
 $ pip install -r requirments.txt
@@ -28,4 +29,8 @@ $ cp .env.example .env
 ```
 Setup your enviroemnts varibale in the .env file
 
+## Running the application
 
+```bash
+$ uvicorn main:app --reload --host 0.0.0.0 --port 5000
+```
