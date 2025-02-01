@@ -29,7 +29,7 @@ async def upload_file(project_id: str, file: UploadFile, app_settings: Settings 
     #getting project directory
     # project_directory = ProjectController().get_project_path(project_id=project_id)
     
-    file_path = data_controller.generate_unique_file_name(original_file_name=file.filename, project_id= project_id)    
+    file_path, unique_fileID = data_controller.generate_unique_file_path(original_file_name=file.filename, project_id= project_id)    
     #loading file by chunks
     try:
         async with aiofiles.open(file_path, 'wb') as f:
@@ -40,7 +40,8 @@ async def upload_file(project_id: str, file: UploadFile, app_settings: Settings 
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
                             content={"response signal" : ResponseSignal.FILE_UPLOADED_FAIL.value})
     
-    return JSONResponse(content={"repsonse signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value})
+    return JSONResponse(content={"repsonse signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
+                                 "File ID": unique_fileID})
     
     
     

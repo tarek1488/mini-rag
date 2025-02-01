@@ -17,7 +17,7 @@ class DataController(BaseController):
         
         return True, ResponseSignal.FILE_IS_VALID.value
     
-    def generate_unique_file_name(self, original_file_name:str, project_id: str):
+    def generate_unique_file_path(self, original_file_name:str, project_id: str):
         random_file_name = self.generate_random_string()
         
         project_diectory = ProjectController().get_project_path(project_id=project_id)
@@ -30,7 +30,7 @@ class DataController(BaseController):
             random_file_name = self.generate_unique_file_name
             new_unique_file_path = os.path.join(project_diectory, random_file_name + "_" + clean_file_name)
         
-        return new_unique_file_path
+        return new_unique_file_path, random_file_name + "_" + clean_file_name
         
         
     def clean_file_name(self, file_name: str):
