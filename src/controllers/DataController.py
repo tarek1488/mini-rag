@@ -18,6 +18,7 @@ class DataController(BaseController):
         return True, ResponseSignal.FILE_IS_VALID.value
     
     def generate_unique_file_path(self, original_file_name:str, project_id: str):
+        
         random_file_name = self.generate_random_string()
         
         project_diectory = ProjectController().get_project_path(project_id=project_id)
@@ -34,7 +35,7 @@ class DataController(BaseController):
         
         
     def clean_file_name(self, file_name: str):
-        
+                    
         cleaned_name = re.sub(r'[^\w_]', '', file_name.strip())
         
         cleaned_name = cleaned_name.replace(" ", "_") 
