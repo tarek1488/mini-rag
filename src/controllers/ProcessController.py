@@ -34,7 +34,8 @@ class ProcessController(BaseController):
     def split_file_content(self, file_content: list, chunk_size: int = 100, overlap:int =20):
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size,
                                                        chunk_overlap=overlap)
-        text_chunks = text_splitter.create_documents(file_content)
+        
+        text_chunks = text_splitter.split_documents(file_content)
         
         return text_chunks
         

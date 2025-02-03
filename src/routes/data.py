@@ -67,6 +67,10 @@ async def process_file(project_id: str, process_request: ProcessRequest):
         )
     
     return JSONResponse(
-        content={"response signal": ResponseSignal.FILE_PROCESSING_SUCCEED.value,
-                 "file chunks": file_chunks}
-    )
+    content={
+        "response signal": ResponseSignal.FILE_PROCESSING_SUCCEED.value,
+        "file chunks": [chunk.model_dump() if hasattr(chunk, "model_dump") else vars(chunk) for chunk in file_chunks]
+    }
+)
+
+    #return file_chunks

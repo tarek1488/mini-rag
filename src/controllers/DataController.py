@@ -25,7 +25,10 @@ class DataController(BaseController):
         
         clean_file_name = self.clean_file_name(file_name= original_file_name)
         
+        
+        
         new_unique_file_path = os.path.join(project_diectory, random_file_name + "_" + clean_file_name)
+        
         
         while os.path.exists(new_unique_file_path):
             random_file_name = self.generate_unique_file_name
@@ -36,7 +39,7 @@ class DataController(BaseController):
         
     def clean_file_name(self, file_name: str):
                     
-        cleaned_name = re.sub(r'[^\w_]', '', file_name.strip())
+        cleaned_name = re.sub(r'[^\w_.]', '', file_name.strip())
         
         cleaned_name = cleaned_name.replace(" ", "_") 
         
