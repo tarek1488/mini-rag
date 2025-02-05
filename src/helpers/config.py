@@ -8,8 +8,10 @@ class Settings(BaseSettings):
     FILE_MAX_SIZE: int
     FILE_CHUNK_SIZE: int
     
+    MONGO_DB_URL: str 
+    MONGO_DB_DATABASE: str
     class Config:
         env_file = ".env"
         
 def get_settings():
-    return Settings()
+    return Settings()    

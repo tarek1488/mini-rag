@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  mongodb:
+    
+    image: mongo:7.0-jammy
+    
+    container_name: mongodb
+    
+    ports:
+      - target: 27017
+        published: 27007
+    
+    volumes:
+      - type: volume
+        source: mongodb_data
+        target: /data/db
+    
+    networks:
+      - backend
+    
+    restart: always
+
+
+networks:
+  backend:
+
+volumes:
+  mongodb_data:
