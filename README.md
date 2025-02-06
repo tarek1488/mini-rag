@@ -21,13 +21,26 @@ $ ./.venv\Scripts\Activate.ps1
 
 ### Install required packages
 ```bash
+$ cd src
 $ pip install -r requirments.txt
 ```
 ### Setup the enviroments variables
 ```bash
+$ cd src
 $ cp .env.example .env 
 ```
 Setup your enviroemnts varibale in the .env file
+
+## Run Docker Compose Services
+```bash
+  $ cd docker
+  $ cp .env.example .env
+```
+### update .evn with your values
+```bash
+  $ cd docker
+  $ docker compose up -d
+``` 
 
 ## Running the application
 
