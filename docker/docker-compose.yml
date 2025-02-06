@@ -10,6 +10,10 @@ services:
       - target: 27017
         published: 27007
     
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+
     volumes:
       - type: volume
         source: mongodb_data
