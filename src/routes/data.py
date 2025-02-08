@@ -21,7 +21,7 @@ data_router =  APIRouter(
 async def upload_file(request: Request,project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)):
     
     db = request.app.mongo_db
-    project_model = ProjectDataModel(db_client=db)
+    project_model = await ProjectDataModel.initialize_project_model(db_client=db)
     project = await project_model.get_or_create_project(project_id=project_id)
     
     data_controller = DataController()
@@ -55,9 +55,9 @@ async def upload_file(request: Request,project_id: str, file: UploadFile, app_se
 @data_router.post("/process/{project_id}")
 async def process_file(request: Request, project_id: str, process_request: ProcessRequest):
     db = request.app.mongo_db
-    chunk_data_model = ChunkDataModel(db_client = db)
+    chunk_data_model = await ChunkDataModel.initialize_chunk_model(db_client=db)
     
-    project_model = ProjectDataModel(db_client=db)
+    project_model = await ProjectDataModel.initialize_project_model(db_client=db)
     project = await project_model.get_or_create_project(project_id=project_id)
     
     process_controller = ProcessController(project_id=project_id)
