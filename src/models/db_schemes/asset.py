@@ -5,8 +5,8 @@ from datetime import datetime
 
 class Asset(BaseModel):
     id: Optional[ObjectId] = Field(None, alias="_id")
-    asset_name: str =  Field(...,min_length=5)
-    asset_project_id:ObjectId
+    asset_name: str =  Field(...,min_length=1)
+    asset_project_id: ObjectId
     asset_type:str = Field(..., min_length=1)
     asset_size: Optional[int] = Field(gt=0, default=None)
     assed_pushed_at: datetime = Field(default=datetime.now())
