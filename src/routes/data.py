@@ -5,10 +5,12 @@ from helpers.config import get_settings, Settings
 from controllers import DataController, ProjectController, ProcessController
 import aiofiles
 from models import ResponseSignal
+from models import AssetTypeEnum
 import logging
 from .schemes.data import ProcessRequest
-from models import ProjectDataModel, ChunkDataModel
+from models import ProjectDataModel, ChunkDataModel, AssetDataModel
 from models.db_schemes.data_chunk import DataChunk
+from models.db_schemes.asset import Asset
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -21,7 +23,7 @@ data_router =  APIRouter(
 async def upload_file(request: Request,project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)):
     
     db = request.app.mongo_db
-    project_model = ProjectDataModel(db_client=db)
+    project_model = await ProjectDataModel.initialize_project_model(db_client=db)
     project = await project_model.get_or_create_project(project_id=project_id)
     
     data_controller = DataController()
@@ -47,17 +49,27 @@ async def upload_file(request: Request,project_id: str, file: UploadFile, app_se
         return JSONResponse(status_code=status.HTTP_400_BAD_REQUEST,
                             content={"response signal" : ResponseSignal.FILE_UPLOADED_FAIL.value})
     
+    asset_model = await AssetDataModel.initialize_asset_model(db_client=db)
+    
+    asset_record = await asset_model.create_asset(asset= Asset(
+        asset_name=  unique_fileID,
+        asset_project_id= project.id,
+        asset_type= AssetTypeEnum.FILE.value,
+        asset_size= os.path.getsize(file_path)
+        
+    ))
+    
     return JSONResponse(content={"repsonse signal" : ResponseSignal.FILE_UPLOADED_SUCCESS.value,
-                                 "File ID": unique_fileID})
+                                 "File ID": str(asset_record.id)})
     
     
     
 @data_router.post("/process/{project_id}")
 async def process_file(request: Request, project_id: str, process_request: ProcessRequest):
     db = request.app.mongo_db
-    chunk_data_model = ChunkDataModel(db_client = db)
+    chunk_data_model = await ChunkDataModel.initialize_chunk_model(db_client=db)
     
-    project_model = ProjectDataModel(db_client=db)
+    project_model = await ProjectDataModel.initialize_project_model(db_client=db)
     project = await project_model.get_or_create_project(project_id=project_id)
     
     process_controller = ProcessController(project_id=project_id)
