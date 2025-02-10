@@ -9,4 +9,5 @@ class ResponseSignal(Enum):
     FILE_PROCESSING_FALIED = "File processing failed"
     FILE_PROCESSING_SUCCEED = "File processing succeed"
     CHUNKS_DELETE_SUCCEED = "Chunks delete succeed"
-    
+    PROJECT_IS_EMPYT = "There is no files tp process in this project"
+    FILE_NOT_FOUND = "File not found in this project with this file id"
