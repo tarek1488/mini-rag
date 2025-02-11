@@ -26,7 +26,7 @@ class AssetDataModel(BaseDataModel):
                 )
                 
     async def create_asset(self, asset: Asset):
-        result = await self.collection.insert_one(asset.model_dump(by_alias=True, exclude_unset=True))
+        result = await self.collection.insert_one(asset.model_dump(by_alias=True, exclude_unset=False))
         asset.id = result.inserted_id
         return asset
     
@@ -48,4 +48,17 @@ class AssetDataModel(BaseDataModel):
         assets = await cursor.to_list(None)
         
         records = [Asset(**asset) for asset in assets]
-        return records 
+        return records
+    
+    async def update_asset_is_processed_status(self, asset_file_name: str, asset_project_id: str):
+        old_asset = await self.get_asset_by_project_id_file_name(asset_file_name= asset_file_name,
+                                                                 asset_project_id=asset_project_id)
+        old_asset_id = old_asset.id
+        
+        filter_query = {"_id" : old_asset_id}
+        update_query = {"$set": {"asset_is_processed": 1}}
+        
+        result = await self.collection.update_one(filter_query, update_query)
+        
+        return 1
+         

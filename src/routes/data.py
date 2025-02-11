@@ -78,7 +78,7 @@ async def process_file(request: Request, project_id: str, process_request: Proce
     chunk_size = process_request.CHUNK_SIZE
     do_reset = process_request.DO_RESET
     
-    project_files_id = []
+    project_files = []
     asset_data_model = await AssetDataModel.initialize_asset_model(db_client=db)
     if process_request.FILE_ID is not None:
         file_name = process_request.FILE_ID
@@ -87,14 +87,14 @@ async def process_file(request: Request, project_id: str, process_request: Proce
             return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
                                 content={
                                     "response signal": ResponseSignal.FILE_NOT_FOUND.value})
-        project_files_id.append(asset_file) 
+        project_files.append(asset_file) 
     
     else:
-        project_files_id = await asset_data_model.get_assets_by_project_id(project_id= project.id,
+        project_files = await asset_data_model.get_assets_by_project_id(project_id= project.id,
                                                                      asset_type= AssetTypeEnum.FILE.value )
     
     
-    if len(project_files_id) == 0:
+    if len(project_files) == 0:
         return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
     content={
         "response signal": ResponseSignal.PROJECT_IS_EMPYT.value,
@@ -106,7 +106,15 @@ async def process_file(request: Request, project_id: str, process_request: Proce
          
     number_of_inserted_chunks = 0
     number_of_files = 0
-    for file in project_files_id:
+    for file in project_files:
+        file_name = file.asset_name
+        
+        if do_reset:
+            file.asset_is_processed = 0
+        
+        if file.asset_is_processed:
+            logger.info(f"this file with this id: {file.asset_name} is processed once before")
+            continue
         file_id = file.asset_name
         file_content = process_controller.get_file_content(file_id= file_id)
         
@@ -134,6 +142,9 @@ async def process_file(request: Request, project_id: str, process_request: Proce
                                 for i, chunk in enumerate(file_chunks)
                                 ]
         
+        
+        res =  await asset_data_model.update_asset_is_processed_status(asset_file_name= file_name,
+                                                                       asset_project_id=project.id)
         
         
         number_of_inserted_chunks += await chunk_data_model.insert_many_batches(chunks=file_chunks_records)
