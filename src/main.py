@@ -7,8 +7,7 @@ from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.server_api import ServerApi
 from helpers.config import get_settings
-from stores.llm import LLMProviderFactory
-from stores.llm import LLMProviderEnum
+from stores.llm.LLMProviderFactory import LLMProviderFactory
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,7 +17,7 @@ async def lifespan(app: FastAPI):
     
     app.mongo_db = app.mongo_client.get_database(settings.MONGO_DB_DATABASE)
     
-    llm_provider_factory = LLMProviderFactory(config= settings.model_dump())
+    llm_provider_factory = LLMProviderFactory(config= settings)
     
     #setting generation client
     app.generation_client = llm_provider_factory.intialize_provider(provider_name= settings.GENERATION_BACKEND)

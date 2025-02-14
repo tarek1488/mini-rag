@@ -19,7 +19,7 @@ class LLMProviderFactory:
             return provider
         
         if provider_name == LLMProviderEnum.COHERE.value:
-            provider = OpenAIProvider(
+            provider = CoHereProvider(
                 api_key= self.config.COHERE_API_KEY,
                 default_input_max_characters= self.config.INPUT_DEFAULT_MAX_CHARACTERS,
                 default_output_max_token= self.config.GENERATION_DEFAULT_MAX_OUTPUT_TOKENS,
