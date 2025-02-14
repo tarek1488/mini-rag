@@ -3,6 +3,7 @@ from ..LLMInterface import LLMInetrface
 from cohere import ClientV2
 from logging import getLogger
 from ..LLMRoleEnum import LLMRoleEnum
+from ..DocumentTypeEnum import DocumentTypeEnum, CohereDcoumentTypeEnum
 
 class CoHereProvider(LLMInetrface):
     def __init__(self, api_key: str, default_input_max_characters:int = 1000,
@@ -64,7 +65,32 @@ class CoHereProvider(LLMInetrface):
             
         
     def embed_text(self, text:str, document_type:str ,embedding_dimension: int):
-        pass
+        
+        if not self.client or self.client is None:
+            self.logger.error("Error while connecting to Cohere Client (Cohere client was not set)")
+            return None
+        
+        if self.embedding_model_id is None:
+            self.logger.error("Embedding model id for Cohere was not set")
+            return None
+        
+        input_type = CohereDcoumentTypeEnum.DOCUMENT.value
+        if document_type == DocumentTypeEnum.QUERY.value:
+            input_type = CohereDcoumentTypeEnum.QUERY
+        
+        response = self.client.embed(
+            model= self.embedding_model_id,
+            input_type= input_type,
+            texts=[text],
+            embedding_types=["float"]
+        )
+        
+        if not response or response.embeddings or len(response.embeddings.float) == 0:
+            self.logger.error("Error while text embedding with Cohere")
+            return None
+        
+        return response.embeddings.float[0]
+        
     
     def construct_prompt(self, prompt:str, role:str):
         constructed_prompt = {"role" : role, "content": self.process_text(text=prompt)}
