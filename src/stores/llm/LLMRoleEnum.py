@@ -1,6 +1,6 @@
 from enum import Enum
 
-class LLMRoleOpenAIEnum(Enum):
+class LLMRoleEnum(Enum):
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"

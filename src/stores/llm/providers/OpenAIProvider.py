@@ -1,7 +1,7 @@
 from ..LLMInterface import LLMInetrface
 from openai import OpenAI
 from logging import getLogger
-from ..LLMRoleEnum import LLMRoleOpenAIEnum
+from ..LLMRoleEnum import LLMRoleEnum
 class OpenAIProvider(LLMInetrface):
     
     def __init__(self, api_key: str, api_url:str =None, default_input_max_characters:int = 1000,
@@ -36,7 +36,7 @@ class OpenAIProvider(LLMInetrface):
         
     def generate_text(self, prompt:str, max_output_token: int = None, temprature: float= None, chat_history: list = []):
         if not self.client or self.client is None:
-            self.logger.error("OpenAI client was not set")
+            self.logger.error("Error while connecting to OpenAI Client (OpenAI client was not set)")
             return None
         
         if self.generation_model_id is None:
@@ -46,7 +46,7 @@ class OpenAIProvider(LLMInetrface):
         max_output_token = max_output_token if max_output_token is not None else self.default_output_max_token
         temprature = temprature if temprature is not None else self.model_temprature
         
-        new_prompt = self.construct_prompt(prompt=prompt, role= LLMRoleOpenAIEnum.USER.value)
+        new_prompt = self.construct_prompt(prompt=prompt, role= LLMRoleEnum.USER.value)
         
         chat_history.append(new_prompt)
         
