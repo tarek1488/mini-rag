@@ -8,6 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.server_api import ServerApi
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
+from stores.vectorDB import VectorDBFactory
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
     app.mongo_db = app.mongo_client.get_database(settings.MONGO_DB_DATABASE)
     
     llm_provider_factory = LLMProviderFactory(config= settings)
+    vectordb_provider_factory = VectorDBFactory(config= settings)
     
     #setting generation client
     app.generation_client = llm_provider_factory.intialize_provider(provider_name= settings.GENERATION_BACKEND)
@@ -28,7 +30,10 @@ async def lifespan(app: FastAPI):
     app.embedding_client.set_embedding_model(model_id= settings.EMBEDDING_MODEL_ID,
                                              vector_size= settings.EMBEDDING_MODEL_SIZE)
     
+    app.vector_db_client = vectordb_provider_factory.intialize_provider(provider_name= settings.VECTORDB_PROVIDER)
+    app.vector_db_client.connect()
     yield
+    app.vector_db_client.disconnect()
     app.mongo_client.close()
 
 app = FastAPI(lifespan=lifespan)
