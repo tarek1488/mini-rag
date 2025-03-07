@@ -15,7 +15,7 @@ class LLMInetrface(ABC):
         pass
     
     @abstractmethod
-    def embed_text(self, text:str, document_type:str ,embedding_dimension: int):
+    def embed_text(self, text:str, document_type:str):
         pass
     
     @abstractmethod

@@ -67,6 +67,7 @@ class QdrantProvider(VectorDBInterface):
         if self.is_Collection_exists(collection_name= collection_name):
             self.logger.info("This collection is already exists ")
             return None
+        
         _ = self.client.create_collection(collection_name= collection_name,
                                           vectors_config= models.VectorParams(size= embedding_size, distance=self.distance_method))
         return True
