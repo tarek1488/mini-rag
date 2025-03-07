@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 import os
 from helpers.config import get_settings, Settings
 import logging
-from .schemes import PushRequest
+from .schemes import PushRequest, SearchRequest
 from models import ProjectDataModel, ChunkDataModel
 from models import ResponseSignal
 from controllers import NLPController
@@ -91,6 +91,36 @@ async def get_project_info_from_vectordb(request: Request, project_id: str):
                                      "collection_infos": collection_infos.model_dump()})
     
 
-@nlp_router.get("/search_project/{project_id}")
-async def search_project_by_vector():
-    pass
+@nlp_router.post("/search_project/{project_id}")
+async def search_project_by_vector(request: Request, project_id: str, search_request: SearchRequest):
+    vector_db_client =  request.app.vector_db_client
+    mongo_db_client = request.app.mongo_db
+    
+    project_data_model = await ProjectDataModel.initialize_project_model(db_client= mongo_db_client)
+    
+    project = await project_data_model.get_or_create_project(project_id= project_id)
+    if not project:
+        return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
+                            content={"signal": ResponseSignal.PROJECT_NOT_FOUND.value})
+    
+    nlp_controller = NLPController(vector_db_client= vector_db_client,
+                                   generation_backend_client= request.app.generation_client,
+                                   embedding_backend_client=request.app.embedding_client)
+    
+    collection_name = nlp_controller.create_collection_name(project_id= project.project_id)
+    vector = nlp_controller.get_query_vector(text= search_request.text)
+        
+      
+    retrieved_data = vector_db_client.search_by_vector(collection_name= collection_name,
+                                       vector =  vector,
+                                       limit = search_request.limit)
+    if not retrieved_data:
+        return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
+                            content={"signal": ResponseSignal.SEARCH_BY_VECTOR_ERROR.value})
+    
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+        "signal": ResponseSignal.SEARCH_BY_VECTOR_SUCCEED.value,
+        "data": [item.model_dump() for item in retrieved_data]
+        })

@@ -16,3 +16,6 @@ class ResponseSignal(Enum):
     DATA_INSERTION_IN_VECTORDB_SUCCEED= "Data inserted successfully in vector db"
     RETRIEVING_COLLECTION_INFO_VECTORDB_ERROR= "Error while retrieving collection info from vector db"
     RETRIEVING_COLLECTION_INFO_VECTORDB_SUCCEED= "retrieving collection info from vector db succeed"
+    SEARCH_BY_VECTOR_ERROR = "Error while searching by vector"
+    SEARCH_BY_VECTOR_SUCCEED = "searching by vector succeed"
+    

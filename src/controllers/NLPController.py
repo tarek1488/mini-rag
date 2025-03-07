@@ -59,6 +59,9 @@ class NLPController(BaseController):
         if return_val != True:
             return None
         
-        
         return True
+    
+    def get_query_vector(self, text:str):
+        vector = self.embedding_backend_client.embed_text( text = text, document_type = DocumentTypeEnum.QUERY.value)
+        return vector
         
