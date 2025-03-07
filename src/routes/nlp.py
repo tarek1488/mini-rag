@@ -80,6 +80,16 @@ async def get_project_info_from_vectordb(request: Request, project_id: str):
                                    generation_backend_client= request.app.generation_client,
                                    embedding_backend_client=request.app.embedding_client)
     
+    collection_infos = nlp_controller.get_vector_collection_info(project= project)
+    
+    if not collection_infos:
+        return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
+                            content={"signal": ResponseSignal.RETRIEVING_COLLECTION_INFO_VECTORDB_ERROR.value})
+    
+    return JSONResponse(status_code= status.HTTP_200_OK,
+                            content={"signal": ResponseSignal.RETRIEVING_COLLECTION_INFO_VECTORDB_SUCCEED.value,
+                                     "collection_infos": collection_infos.model_dump()})
+    
 
 @nlp_router.get("/search_project/{project_id}")
 async def search_project_by_vector():
