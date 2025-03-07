@@ -64,7 +64,7 @@ class CoHereProvider(LLMInetrface):
         return response.message.content[0].text
             
         
-    def embed_text(self, text:str, document_type:str ,embedding_dimension: int):
+    def embed_text(self, text:str, document_type:str):
         
         if not self.client or self.client is None:
             self.logger.error("Error while connecting to Cohere Client (Cohere client was not set)")
@@ -85,7 +85,7 @@ class CoHereProvider(LLMInetrface):
             embedding_types=["float"]
         )
         
-        if not response or response.embeddings or len(response.embeddings.float) == 0:
+        if not response or not response.embeddings or len(response.embeddings.float) == 0:
             self.logger.error("Error while text embedding with Cohere")
             return None
         

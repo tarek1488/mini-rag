@@ -67,6 +67,7 @@ class QdrantProvider(VectorDBInterface):
         if self.is_Collection_exists(collection_name= collection_name):
             self.logger.info("This collection is already exists ")
             return None
+        
         _ = self.client.create_collection(collection_name= collection_name,
                                           vectors_config= models.VectorParams(size= embedding_size, distance=self.distance_method))
         return True
@@ -91,6 +92,7 @@ class QdrantProvider(VectorDBInterface):
             return None
         
         point =  models.PointStruct(
+            id= [record_id],
             payload= {"text" : text, "metadata": meta_data},
             vector= vector
         )
@@ -115,7 +117,7 @@ class QdrantProvider(VectorDBInterface):
             meta_datas = [None] * len(texts)
         
         if record_ids is None:
-            record_ids [None] * len(texts)
+            record_ids  = list(range(0, len(texts)))
         
         points = []
         for i in range(0, len(texts), batch_size):
@@ -127,7 +129,7 @@ class QdrantProvider(VectorDBInterface):
             batch_record_ids =  record_ids[i : batch_end]
             
             batch_points = [
-                models.PointStruct(
+                models.PointStruct(id = batch_record_ids[j],
                     payload = {"text" : batch_texts[j], "metadata" : batch_metadatas[j]},
                     vector= batch_vectors[j]
                 )
