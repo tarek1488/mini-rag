@@ -26,7 +26,7 @@ class NLPController(BaseController):
         collection_name =  self.create_collection_name(project_id= project.project_id)
         return self.vector_db_client.get_collection(collection_name= collection_name)
     
-    def psuh_data_into_vector_db(self, project: Project, chunks: List[DataChunk], do_reset: int = 0):
+    def psuh_data_into_vector_db(self, project: Project, chunks: List[DataChunk],chunk_ids:List[int] ,do_reset: int = 0):
         
         #1-get collection name
         collection_name =  self.create_collection_name(project_id= project.project_id) 
@@ -54,7 +54,8 @@ class NLPController(BaseController):
         return_val = self.vector_db_client.insert_many_records(collection_name= collection_name,
                                                   texts = texts,
                                                   vectors= vectors ,
-                                                  meta_datas = meta_datas,)
+                                                  meta_datas = meta_datas,
+                                                  record_ids = chunk_ids)
         if return_val != True:
             return None
         

@@ -85,7 +85,7 @@ class CoHereProvider(LLMInetrface):
             embedding_types=["float"]
         )
         
-        if not response or response.embeddings or len(response.embeddings.float) == 0:
+        if not response or not response.embeddings or len(response.embeddings.float) == 0:
             self.logger.error("Error while text embedding with Cohere")
             return None
         

@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from routes import base
 from routes import data
+from routes import nlp
 import asyncio
 from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -39,3 +40,4 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.include_router(base.base_router)
 app.include_router(data.data_router)
+app.include_router(nlp.nlp_router)
