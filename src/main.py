@@ -10,6 +10,7 @@ from pymongo.server_api import ServerApi
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectorDB import VectorDBFactory
+from stores.llm import TemplateParser
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,8 +32,15 @@ async def lifespan(app: FastAPI):
     app.embedding_client.set_embedding_model(model_id= settings.EMBEDDING_MODEL_ID,
                                              vector_size= settings.EMBEDDING_MODEL_SIZE)
     
+    #setting vector data base client
     app.vector_db_client = vectordb_provider_factory.intialize_provider(provider_name= settings.VECTORDB_PROVIDER)
     app.vector_db_client.connect()
+    
+    #setting template pareser
+    app.template_parser = TemplateParser(language= settings.PRIMARY_LANGUAGE,
+                                         defualt_lang= settings.DEFAULT_LANGUAGE)
+    
+    
     yield
     app.vector_db_client.disconnect()
     app.mongo_client.close()
