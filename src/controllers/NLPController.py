@@ -64,4 +64,31 @@ class NLPController(BaseController):
     def get_query_vector(self, text:str):
         vector = self.embedding_backend_client.embed_text( text = text, document_type = DocumentTypeEnum.QUERY.value)
         return vector
+    
+    
+    def search_database_vector(self, project:Project, text: str, limit: int = 3):
+        collection_name = self.create_collection_name(project_id= project.project_id)
+        
+        vector = self.get_query_vector(text= text)
+        if not vector or len(vector) == 0:
+            return None
+        
+        
+        documents = self.vector_db_client.search_by_vector(collection_name = collection_name,
+                                                                   vector = vector,
+                                                                   limit = limit)
+        
+        if not documents:
+            return None
+        
+        return documents
+    
+    def asnwer_rag_question(self, project:Project, query: str, limit: int = 3):
+        documents = self.search_database_vector(project=project,
+                                                text=query,
+                                                limit=limit)
+        if not documents or len(documents) == None:
+            return None
+        
+        pass
         

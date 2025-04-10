@@ -107,13 +107,10 @@ async def search_project_by_vector(request: Request, project_id: str, search_req
                                    generation_backend_client= request.app.generation_client,
                                    embedding_backend_client=request.app.embedding_client)
     
-    collection_name = nlp_controller.create_collection_name(project_id= project.project_id)
-    vector = nlp_controller.get_query_vector(text= search_request.text)
-        
-      
-    retrieved_data = vector_db_client.search_by_vector(collection_name= collection_name,
-                                       vector =  vector,
-                                       limit = search_request.limit)
+     
+    retrieved_data = nlp_controller.search_database_vector(project= project,
+                                                           text = search_request.text,
+                                                           limit=search_request.limit)
     if not retrieved_data:
         return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
                             content={"signal": ResponseSignal.SEARCH_BY_VECTOR_ERROR.value})
