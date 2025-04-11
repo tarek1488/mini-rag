@@ -27,6 +27,8 @@ DOCUMENT_PROMPT = Template(
 FOOTER_PROMPT = Template(
     "\n".join([
         "استنادًا فقط إلى المستندات أعلاه، يرجى توليد إجابة للمستخدم.",
-        "## الإجابة: $question"
+        "## السؤال: $question",
+        "",
+        "## الإجابة:"
     ])
 )
