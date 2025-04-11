@@ -19,7 +19,8 @@ class OpenAIProvider(LLMInetrface):
         self.embedding_model_id = None
         self.embedding_vector_size = None
         
-        self.client = OpenAI(api_key= self.api_key)
+        self.client = OpenAI(api_key= self.api_key,
+                             base_url= self.api_url if self.api_url and len(self.api_url) !=0 else None)
         
         self.logger =  getLogger(__name__)
         
@@ -53,7 +54,7 @@ class OpenAIProvider(LLMInetrface):
         response = self.client.chat.completions.create(
             model= self.generation_model_id,
             messages= chat_history,
-            max_output_token = max_output_token,
+            max_tokens = max_output_token,
             temperature= temprature
         ) 
         

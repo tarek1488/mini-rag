@@ -31,7 +31,8 @@ async def push_project_chunks_to_vectordb(request: Request, project_id: str, pus
     
     nlp_controller = NLPController(vector_db_client= vector_db_client,
                                    generation_backend_client= request.app.generation_client,
-                                   embedding_backend_client=request.app.embedding_client)
+                                   embedding_backend_client=request.app.embedding_client,
+                                   template_parser=request.app.template_parser)
     
     chunk_data_model =  await ChunkDataModel.initialize_chunk_model(db_client= mongo_db_client)
     
@@ -78,7 +79,8 @@ async def get_project_info_from_vectordb(request: Request, project_id: str):
     
     nlp_controller = NLPController(vector_db_client= vector_db_client,
                                    generation_backend_client= request.app.generation_client,
-                                   embedding_backend_client=request.app.embedding_client)
+                                   embedding_backend_client=request.app.embedding_client,
+                                   template_parser=request.app.template_parser)
     
     collection_infos = nlp_controller.get_vector_collection_info(project= project)
     
@@ -105,15 +107,13 @@ async def search_project_by_vector(request: Request, project_id: str, search_req
     
     nlp_controller = NLPController(vector_db_client= vector_db_client,
                                    generation_backend_client= request.app.generation_client,
-                                   embedding_backend_client=request.app.embedding_client)
+                                   embedding_backend_client=request.app.embedding_client,
+                                   template_parser=request.app.template_parser)
     
-    collection_name = nlp_controller.create_collection_name(project_id= project.project_id)
-    vector = nlp_controller.get_query_vector(text= search_request.text)
-        
-      
-    retrieved_data = vector_db_client.search_by_vector(collection_name= collection_name,
-                                       vector =  vector,
-                                       limit = search_request.limit)
+     
+    retrieved_data = nlp_controller.search_database_vector(project= project,
+                                                           text = search_request.text,
+                                                           limit=search_request.limit)
     if not retrieved_data:
         return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
                             content={"signal": ResponseSignal.SEARCH_BY_VECTOR_ERROR.value})
@@ -124,3 +124,40 @@ async def search_project_by_vector(request: Request, project_id: str, search_req
         "signal": ResponseSignal.SEARCH_BY_VECTOR_SUCCEED.value,
         "data": [item.model_dump() for item in retrieved_data]
         })
+
+@nlp_router.post("/index/answer/{project_id}")
+async def answer_rag_question(request: Request, project_id: str, search_request: SearchRequest):
+    vector_db_client =  request.app.vector_db_client
+    mongo_db_client = request.app.mongo_db
+    
+    project_data_model = await ProjectDataModel.initialize_project_model(db_client= mongo_db_client)
+    
+    project = await project_data_model.get_or_create_project(project_id= project_id)
+    if not project:
+        return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
+                            content={"signal": ResponseSignal.PROJECT_NOT_FOUND.value})
+    
+    nlp_controller = NLPController(vector_db_client= vector_db_client,
+                                   generation_backend_client= request.app.generation_client,
+                                   embedding_backend_client=request.app.embedding_client,
+                                   template_parser=request.app.template_parser)
+    
+    answer, full_prompt, chat_history = nlp_controller.asnwer_rag_question(project=project,
+                                                                           query=search_request.text,
+                                                                           limit=search_request.limit
+                                                                           )
+    if not answer:
+        return JSONResponse(status_code= status.HTTP_400_BAD_REQUEST,
+                            content={"signal": ResponseSignal.ANSWER_RAG_QUESTION_ERROR.value})
+        
+    #logger.log()
+    return JSONResponse(status_code=status.HTTP_200_OK,
+                        content={
+                            "signal" : ResponseSignal.ANSWER_RAG_QUESTION_SUCCEED.value,
+                            "answer": answer,
+                            "prompt" : full_prompt,
+                            "chat_history": chat_history,
+                        })
+        
+    
+    

@@ -2,6 +2,7 @@ from ..VectorDBInterface import VectorDBInterface
 from ..VectorDBEnums import VectorDBMetricMethod
 from logging import Logger
 from qdrant_client import QdrantClient, models
+from models.db_schemes import RetrievedVectorDBData
 
 
 class QdrantProvider(VectorDBInterface):
@@ -146,7 +147,15 @@ class QdrantProvider(VectorDBInterface):
     
      
     def search_by_vector(self, collection_name: str, vector: list, limit:int = 3):
-        return self.client.search(collection_name= collection_name,
+        documents = self.client.search(collection_name= collection_name,
                                   query_vector= vector,
-                                  limit=3)  
+                                  limit=limit)
+        if not documents or len(documents) == 0:
+            return None
+        data = [RetrievedVectorDBData(text=doc.payload["text"],
+                                      score=doc.score,
+                                      meta_data=doc.payload["metadata"])
+                for doc in documents]
+        
+        return data  
         
