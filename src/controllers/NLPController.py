@@ -3,14 +3,17 @@ from models.db_schemes import Project
 from models.db_schemes import DataChunk
 from typing import List
 from stores.llm.DocumentTypeEnum import DocumentTypeEnum
+from stores.llm import TemplateParser
+from stores.llm.LLMRoleEnum import LLMRoleEnum
 class NLPController(BaseController):
     
-    def __init__(self, vector_db_client, generation_backend_client, embedding_backend_client):
+    def __init__(self, vector_db_client, generation_backend_client, embedding_backend_client, template_parser: TemplateParser):
         super().__init__()
         
         self.vector_db_client = vector_db_client
         self.generation_backend_client = generation_backend_client
         self.embedding_backend_client = embedding_backend_client
+        self.template_parser = template_parser
     
     def create_collection_name(self, project_id:str):
         name =  f'collection_{project_id}'.strip()
@@ -90,5 +93,34 @@ class NLPController(BaseController):
         if not documents or len(documents) == None:
             return None
         
-        pass
+        system_prompt = self.template_parser.get(group="rag_prompts",
+                                                 key="SYSTEM_PROMPT")
+        
+        document_prompt ="\n".join([
+            self.template_parser.get(group="rag_prompts",
+                                              key="DOCUMENT_PROMPT",
+                                              vars = {"doc_num" : i+1,
+                                                      "chunck_text": doc.text})
+            for i,doc in enumerate(documents)
+        ])
+        
+        footer_prompt = self.template_parser.get(group="rag_prompts",
+                                                 key="FOOTER_PROMPT")
+         
+        chat_history = [
+            self.generation_backend_client.construct_prompt(prompt = system_prompt,
+                                                            role= LLMRoleEnum.SYSTEM.value)
+        ]
+        
+        full_prompt = "\n\n".join([document_prompt,
+                                   footer_prompt])
+        
+        #full_prompt = self.generation_backend_client.construct_prompt(prompt = full_prompt,
+                                                            #role= LLMRoleEnum.USER.value)
+        
+        answer = self.generation_backend_client.generate_text(prompt = full_prompt,
+                                                              max_output_token = self.app_settings.GENERATION_DEFAULT_MAX_OUTPUT_TOKENS,
+                                                              temprature= self.app_settings.GENERATION_DEFAULT_TEMPRATURE,
+                                                              chat_history= chat_history)
+        return answer, full_prompt, chat_history
         

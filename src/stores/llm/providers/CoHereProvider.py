@@ -54,7 +54,7 @@ class CoHereProvider(LLMInetrface):
         
         response = self.client.chat(model= self.generation_model_id,
                                     temperature= temprature,
-                                    max_output_token = max_output_token,
+                                    max_tokens = max_output_token,
                                     messages=chat_history)
         
         if not response or not response.message or len(response.message.content) == 0 or not response.message.content[0].text:
