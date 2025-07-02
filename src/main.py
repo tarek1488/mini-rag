@@ -11,7 +11,7 @@ from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
 from stores.vectorDB import VectorDBFactory
 from stores.llm import TemplateParser
-
+from utils import setup_metrics
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Getting the enviroments settings
@@ -46,6 +46,8 @@ async def lifespan(app: FastAPI):
     app.mongo_client.close()
 
 app = FastAPI(lifespan=lifespan)
+# Add prometheus metrics 
+setup_metrics(app=app)
 app.include_router(base.base_router)
 app.include_router(data.data_router)
 app.include_router(nlp.nlp_router)
