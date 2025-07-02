@@ -1,5 +1,11 @@
-version: "3.7"
 services:
+  # FastAPI application
+
+
+  # Nginx
+
+
+  # Mongo DB
   mongodb:
     
     image: mongo:7.0-jammy
@@ -23,6 +29,21 @@ services:
       - backend
     
     restart: always
+
+
+  # Qdrant 
+
+
+  # Prometheus Monitoring
+
+
+  # Grafana Dashboard
+
+  
+  # Node exporter for performance metrics 
+
+
+  #Mongo DB exporter for metrics
 
 
 networks:
