@@ -28,6 +28,6 @@ class PrometheusMiddleware(BaseHTTPMiddleware):
 def setup_metrics(app: FastAPI):
     app.add_middleware(PrometheusMiddleware)
     
-    @app.get("/z8!Vm#2_kXp@WfR3$eY7q&_LbNjM^g59d*", include_in_schema=False)
+    @app.get("/tattte_11663_ahshas_2727dhs", include_in_schema=False)
     def metrics():
         return Response(generate_latest(), CONTENT_TYPE_LATEST)
