@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     VECTORDB_PROVIDER: str = None
     VECTORDB_PATH: str = None
     VECTORDB_DISTANCE_METHOD: str = None
+    QDRANT_URL:str = None
     
     PRIMARY_LANGUAGE:str = "en"
     DEFAULT_LANGUAGE:str = "en"

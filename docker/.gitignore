@@ -1,1 +1,4 @@
-.env
+env/.env.mongodb
+env/.env.mongodb.exporter
+env/.env.grafana
+env/.env.app

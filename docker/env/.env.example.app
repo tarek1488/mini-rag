@@ -1,0 +1,40 @@
+APP_NAME="RAG"
+APP_VERSION = "0.1"
+FILE_ALLOWED_EXTENSIONS = ["text/plain", "application/pdf"]
+FILE_MAX_SIZE = 10
+FILE_CHUNK_SIZE = 512000 #512kB
+
+# ========================== MONGODB CONFIG ==========================
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
+MONGO_INITDB_DATABASE=
+MONGO_DB_URL = "mongodb://<username>:<password>@mongodb:27017"
+MONGODB_HOST= "mongodb"
+MONGODB_PORT = "27017"
+
+# ========================== LLM CONFIG ==========================
+
+GENERATION_BACKEND = "OPENAI"
+EMBEDDING_BACKEND = "COHERE"
+
+OPENAI_API_KEY = ""
+OPENAI_API_URL=
+
+COHERE_API_KEY=""
+
+GENERATION_MODEL_ID = 
+EMBEDDING_MODEL_ID = 
+EMBEDDING_MODEL_SIZE=
+
+GENERATION_DEFAULT_MAX_OUTPUT_TOKENS = 200
+GENERATION_DEFAULT_TEMPRATURE = 0.1
+INPUT_DEFAULT_MAX_CHARACTERS = 1024
+
+# ========================== VectorDB CONFIG ==========================
+VECTORDB_PROVIDER = "QDRANT"
+VECTORDB_PATH = "qdrant_db"
+VECTORDB_DISTANCE_METHOD = "cosine"
+QDRANT_URL="http://qdrant:6333"
+# ========================== Templates CONFIG ==========================
+PRIMARY_LANGUAGE = "en"
+DEFAULT_LANGUAGE = "en"

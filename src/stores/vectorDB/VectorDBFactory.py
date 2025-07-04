@@ -10,8 +10,8 @@ class VectorDBFactory:
     def intialize_provider(self, provider_name: str):
         
         if provider_name == VectorDBProviders.QDRANT.value:
-            database_path = self.base_controller.get_vector_database_path(db_name = self.config.VECTORDB_PATH)
-            provider = QdrantProvider(data_base_path= database_path, 
+            #database_path = self.base_controller.get_vector_database_path(db_name = self.config.VECTORDB_PATH)
+            provider = QdrantProvider(data_base_url= self.config.QDRANT_URL, 
                                       distance_method= self.config.VECTORDB_DISTANCE_METHOD)
             return provider
         return None
