@@ -6,7 +6,7 @@ from models.db_schemes import RetrievedVectorDBData
 
 
 class QdrantProvider(VectorDBInterface):
-    def __init__(self, data_base_path: str, distance_method: str):
+    def __init__(self, data_base_url: str, distance_method: str):
         
         if distance_method == VectorDBMetricMethod.COSINE.value:
             self.distance_method = models.Distance.COSINE
@@ -14,7 +14,7 @@ class QdrantProvider(VectorDBInterface):
         elif distance_method == VectorDBMetricMethod.DOT.value:
             self.distance_method = models.Distance.DOT
         
-        self.data_base_path = data_base_path
+        self.data_base_url = data_base_url
         
         self.client = None
         
@@ -27,7 +27,7 @@ class QdrantProvider(VectorDBInterface):
     
     
     def connect(self):
-        self.client =  QdrantClient(path= self.data_base_path)
+        self.client =  QdrantClient(url= self.data_base_url)
         
     
      

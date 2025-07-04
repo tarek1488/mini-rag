@@ -3,8 +3,14 @@ APP_VERSION = "0.1"
 FILE_ALLOWED_EXTENSIONS = ["text/plain", "application/pdf"]
 FILE_MAX_SIZE = 10
 FILE_CHUNK_SIZE = 512000 #512kB
-MONGO_DB_URL = "mongodb://localhost:27007"
-MONGO_DB_DATABASE=
+
+# ========================== MONGODB CONFIG ==========================
+MONGO_INITDB_ROOT_USERNAME=
+MONGO_INITDB_ROOT_PASSWORD=
+MONGO_INITDB_DATABASE=
+MONGO_DB_URL = "mongodb://<username>:<password>@mongodb:27017"
+MONGODB_HOST= "mongodb"
+MONGODB_PORT = "27017"
 
 # ========================== LLM CONFIG ==========================
 
@@ -28,7 +34,7 @@ INPUT_DEFAULT_MAX_CHARACTERS = 1024
 VECTORDB_PROVIDER = "QDRANT"
 VECTORDB_PATH = "qdrant_db"
 VECTORDB_DISTANCE_METHOD = "cosine"
-
+QDRANT_URL="http://qdrant:6333"
 # ========================== Templates CONFIG ==========================
 PRIMARY_LANGUAGE = "en"
 DEFAULT_LANGUAGE = "en"

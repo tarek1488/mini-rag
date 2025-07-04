@@ -19,6 +19,12 @@ services:
       mongodb:
         condition: service_healthy
     
+    volumes:
+      - type: volume
+        source: fastapi_data
+        target: /app/assets
+
+    
     env_file:
       - ./env/.env.app
   
@@ -94,7 +100,7 @@ services:
   prometheus:
     image: prom/prometheus:main
 
-    container_name: Prometheus
+    container_name: prometheus
 
     ports:
       - target: 9090
@@ -196,6 +202,7 @@ volumes:
   qdrant_data:
   prometheus_data:
   grafana_data:
+  fastapi_data:
 
 configs:
   qdrant_config:
